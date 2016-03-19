@@ -26,6 +26,11 @@ public struct RegexOptions : OptionSetType {
     public static let g = RegexOptions(rawValue: 2)
     
     /**
+     As single line match
+     */
+    public static let s = RegexOptions(rawValue: 3)
+    
+    /**
     multiline
     */
     public static let m = RegexOptions(rawValue: 4)
@@ -41,6 +46,10 @@ extension RegexOptions : CustomStringConvertible {
         
         if self.contains(.g) {
             names.append("g")
+        }
+        
+        if self.contains(.s) {
+            names.append("s")
         }
         
         if self.contains(.m) {
@@ -90,7 +99,11 @@ public final class Regex : RegexMatching {
         }
         
         if self.options.contains(.m) {
-            nsOptions = nsOptions.union([.AnchorsMatchLines, .DotMatchesLineSeparators])
+            nsOptions = nsOptions.union(.AnchorsMatchLines)
+        }
+        
+        if self.options.contains(.s) {
+            nsOptions = nsOptions.union(.DotMatchesLineSeparators)
         }
         
         return try? NSRegularExpression(pattern: self.pattern, options: nsOptions)
@@ -173,6 +186,11 @@ public struct IntermediateRegexliteral {
         self.regex.options = self.regex.options.union(.m)
         return self
     }
+    
+    public var s: IntermediateRegexliteral {
+        self.regex.options = self.regex.options.union(.s)
+        return self
+    }
 }
 
 extension IntermediateRegexliteral : CustomStringConvertible {
@@ -216,6 +234,13 @@ public struct RegexLiteral : RegexMatching {
     
     public var m: RegexLiteral {
         let regex = Regex(pattern: self.pattern, options: self.options.union(.m))
+        let literal = RegexLiteral(regex: regex)
+        
+        return literal
+    }
+    
+    public var s: RegexLiteral {
+        let regex = Regex(pattern: self.pattern, options: self.options.union(.s))
         let literal = RegexLiteral(regex: regex)
         
         return literal

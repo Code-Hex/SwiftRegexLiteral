@@ -33,13 +33,16 @@ import SwiftRegexLiteral
 ## using options
 */
 // multiline
-"abcd\nefgh" ~ /"^.+"/.m
+"abcd\nefgh" ~ /"^.*$"/.m
+
+// singleline
+"My\nNumber" ~ /".*"/.s
 
 // ignore case
 "ABCD" ~ /"[a-z]"/.i
 
 // all pattern match
-"abcd" ~ /"[a-z]"/.g
+"123foo456bar789baz000" ~ /"\\d+"/.g
 
 // combination
 "ABCD" ~ /"[a-z]"/.i.g
